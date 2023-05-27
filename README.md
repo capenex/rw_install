@@ -1,3 +1,4 @@
-# rw_install
+# rw_mod_installer
 一个小界面，能自动检测某游戏的安装位置并为其安装mod
 试试GitHub怎么用而已，对于会用GitHub的大佬来说不可能存在不会安装mod的吧
+想用rw_mod_installer这个名字，但是太长(
