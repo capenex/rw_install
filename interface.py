@@ -3,6 +3,7 @@ import threading
 from tkinter import filedialog
 import getRWPath
 import os
+from extractor import extract
 
 FONT_SIZE_LABEL = 15
 FONT_SIZE_BUTTON = 12
@@ -28,6 +29,7 @@ class UI(object):
 
         self._v = tk.IntVar()   # 摇了我把这两个玩意实在不知道放哪
         self._v3_s = ""
+        self.install_without_check = False
         # 属性
         self.gamePaths = []
         
@@ -124,8 +126,43 @@ class UI(object):
         threading.Thread(target=self._start_install).start()
 
     def _start_install(self):
-        getRWPath.last_use(self.inpTxtV2.get())
-        pass
+        source = self.inpTxtV1.get()
+        destin = self.inpTxtV2.get()
+        if destin[-1] != '/' and destin[-1] != '\\':
+            destin += '\\'
+        getRWPath.last_use(destin)
+        destin += "mods\\units\\"
+        
+        if not os.path.isabs(source):
+            self.inpTxtV1.set('请输入绝对路径')
+            return
+        if not os.path.isfile(source):
+            self.inpTxtV1.set('不受支持的文件类型')
+            return
+        source_suffix = os.path.splitext(source)[1]
+        source = source.replace('/', '\\')
+        source_name = (os.path.splitext(source)[0])[source.rindex('\\')+1:]
+        
+        if source_suffix == ".rwmod":
+            if destin[-1] != '/' and destin[-1] != '\\':
+                destin += '\\'
+            os.system(f"move {source} {destin}{source_name}.rwmod")
+        elif source_suffix in ['.rar', '.7z', '.zip']:
+            source = source.replace('/', '\\')
+            if not self.install_without_check:
+                if os.path.exists(destin + source[source.rindex('\\')+1:]):
+                    self.txtV1.set('文件已存在, 是否替换该文件')
+                    self.install_without_check = True
+                    return
+                else:
+                    extract(source, destin)
+            else:
+                extract(source, destin)
+        else:
+            self.inpTxtV1.set('安装失败')
+            return
+        self.inpTxtV1.set('安装成功')
+        return
 
     def set_path(self):
         self.inpTxtV2.set(self.gamePaths[self._v.get()])
