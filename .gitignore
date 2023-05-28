@@ -2,3 +2,7 @@ info.log
 .vscode/
 __pycache__
 rw_ins_venv
+build
+dist
+release
+rw_installer.spec

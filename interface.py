@@ -195,5 +195,4 @@ class UI(object):
         self.toplevel.destroy()
         self.browsePaths()
 
-ui = UI()
-ui.mainloop()
+
